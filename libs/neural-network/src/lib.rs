@@ -28,10 +28,12 @@ impl Neuron {
     }
 
     pun fn random(output_size: usize) -> Self {
-        let bias = todo!();
+        let mut rng = rand::thread_rng();
+
+        let bias = rng.gen_range(-1.0..=1.0);
 
         let weights = (0..output_size)
-            .map(|_| todo!())
+            .map(|_| rng.gen_range(-1.0..=1.0))
             .collect();
 
         Self { bias, weights }
