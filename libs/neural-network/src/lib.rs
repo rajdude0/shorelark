@@ -11,20 +11,81 @@ pub struct Network {
     layers: Vec<Layer>,
 }
 
+pub struct LayerTopology {
+    pub neurons: usize,
+}
+
+impl Neuron {
+    fn propagate(&self, inputs: &[f32]) -> f32 {
+        assert_eq!(inputs.len(), self.weights.len());
+
+        let output = inputs.iter()
+                            .zip(&self.weights)
+                            .map(|(input, weight)| input * weight)
+                            .sum::<f32>();
+
+        (self.bias + output).max(0.0)
+    }
+
+    pun fn random(output_size: usize) -> Self {
+        let bias = todo!();
+
+        let weights = (0..output_size)
+            .map(|_| todo!())
+            .collect();
+
+        Self { bias, weights }
+    }
+
+
+}
+
 impl Layer {
     fn propagate(&self, inputs: Vec<f32>) -> Vec<f32> {
-        todo!()
+        self.neurons
+            .iter()
+            .map(|neuron| neuron.propagate(&inputs))
+            .collect()
+    }
+
+    pub fn random(
+        input_neurons: usize, 
+        output_neurons: usize
+        ) -> Self {
+            let neurons = (0..output_neurons)
+                .map(|_| Neuron::random(input_neurons))
+                .collect();
+        
+            Self { neurons } 
     }
 }
 
 impl Network {
-    pub fn propagte(&self, inputs: Vec<f32>) -> Vec<f32> {
-        let mut inputs = inputs;
-
-        for layers in &self.layers {
-            inputs = layer.propagate(inputs);
+    pub fn new(layers: Vec<Layer>) -> Self {
+        Self {
+            layers
         }
-
-        inputs;
     }
+    
+    pub fn random(layers: &[LayerTopology]) -> Self {
+            assert!(layers.len() > 1);
+            let layers = layers
+                .windows(2)
+                .map(|adjacentLayers| {
+                    Layer::random(adjacentLayers[0].neurons, adjacentLayers[1].neurons)
+                })
+                .collect();
+
+            Self { layers } 
+        }
+    }
+
+    pub fn propagte(&self, inputs: Vec<f32>) -> Vec<f32> {
+        self.layers
+            .iter()
+            .fold(inputs, |inputs, layer| layer.propagate(inputs))
+    }
+}
+
+fn main() {
 }
